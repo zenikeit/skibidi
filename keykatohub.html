@@ -1,72 +1,362 @@
--- ====================================================
--- TÊN FILE LƯU BỘ NHỚ TRÊN THIẾT BỊ NGƯỜI DÙNG
--- ====================================================
-local saveFileName = "KatoHub_LastKeyDate.txt"
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KatoHub - Key Kích Hoạt</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
 
--- 1. Hàm tính Key chuẩn của NGÀY HÔM NAY (Múi giờ UTC)
-local function getTodayKey()
-    local baseKey = "KatoHub-premeumprovip"
-    local date = os.date("!*t")
-    local dateSeed = date.year * 10000 + date.month * 100 + date.day
-    local randomCode = math.floor(math.abs(math.sin(dateSeed) * 1000000) % 9000) + 1000
-    
-    -- Trả về Key hôm nay & Mã ngày dạng YYYYMMDD
-    return baseKey .. "-" .. tostring(randomCode), tostring(dateSeed)
-end
+        body {
+            background-color: #0b0c10;
+            background-image: 
+                radial-gradient(circle at 50% 20%, rgba(120, 50, 255, 0.15) 0%, transparent 60%),
+                radial-gradient(circle at 50% 80%, rgba(255, 50, 150, 0.1) 0%, transparent 60%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+        }
 
--- 2. Hàm kiểm tra Key nhập vào
-local function checkUserKey(keyNguoiDungNhap)
-    local todayKey, todaySeed = getTodayKey()
-    
-    -- Lấy mã ngày gần nhất đã kích hoạt trong máy người dùng (nếu có)
-    local lastSavedSeed = ""
-    if isfile and isfile(saveFileName) then
-        lastSavedSeed = readfile(saveFileName)
-    end
+        .container {
+            width: 100%;
+            max-width: 420px;
+            background: rgba(18, 20, 29, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 28px;
+            padding: 24px 20px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
 
-    -- TRƯỜNG HỢP 1: Nhập đúng Key của ngày hôm nay
-    if keyNguoiDungNhap == todayKey then
-        -- Lưu lại mã ngày hôm nay vào bộ nhớ máy
-        if writefile then
-            writefile(saveFileName, todaySeed)
-        end
-        
-        game:GetService("StarterGui"):SetCore("SendNotification", {
-            Title = "script:KatoHub",
-            Text = "Kích hoạt thành công! Chúc bạn chơi game vui vẻ.",
-            Duration = 5
-        })
-        return true
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #3b82f6, #a855f7, #ec4899);
+        }
 
-    -- TRƯỜNG HỢP 2: Nhập lại Key cũ (Key hôm nay khác ngày đã lưu gần nhất)
-    elseif lastSavedSeed ~= "" and lastSavedSeed ~= todaySeed then
-        game:GetService("StarterGui"):SetCore("SendNotification", {
-            Title = "script:KatoHub - Báo Lỗi",
-            Text = "Key đã hết hạn! Vui lòng getkey của ngày hôm nay.",
-            Duration = 6
-        })
-        return false
+        .logo-box {
+            width: 72px;
+            height: 72px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, #a855f7, #ec4899);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 0 25px rgba(168, 85, 247, 0.4);
+            margin-bottom: 12px;
+        }
 
-    -- TRƯỜNG HỢP 3: Nhập sai Key hoàn toàn
-    else
-        game:GetService("StarterGui"):SetCore("SendNotification", {
-            Title = "script:KatoHub - Báo Lỗi",
-            Text = "Key không chính xác! Vui lòng kiểm tra lại.",
-            Duration = 5
-        })
-        return false
-    end
-end
+        .logo-box i {
+            font-size: 36px;
+            color: #ffffff;
+        }
 
--- ====================================================
--- VÍ DỤ CÁCH SỬ DỤNG KHI NGƯỜI DÙNG BẤM NÚT XÁC NHẬN KEY
--- ====================================================
--- Thay `KeyDinhDan` bằng ô Textbox chứa Key của sếp
-local isSuccess = checkUserKey(KeyDinhDan)
+        .app-name {
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: #8b92a7;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
 
-if isSuccess then
-    -- ================================================
-    -- CODE CHÍNH CỦA SẾP ĐẶT Ở ĐÂY
-    -- ================================================
-    print("Script KatoHub bắt đầu chạy...")
-end
+        .title {
+            font-size: 22px;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 6px;
+        }
+
+        .subtitle {
+            font-size: 13px;
+            color: #6b7280;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .key-box {
+            width: 100%;
+            background: rgba(10, 11, 16, 0.6);
+            border: 1px dashed rgba(255, 255, 255, 0.15);
+            border-radius: 16px;
+            padding: 16px;
+            text-align: center;
+            margin-bottom: 16px;
+        }
+
+        .key-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: #6b7280;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .key-value {
+            font-size: 16px;
+            font-weight: 800;
+            color: #818cf8;
+            word-break: break-all;
+            letter-spacing: 0.5px;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            color: #10b981;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .status-badge .dot {
+            width: 6px;
+            height: 6px;
+            background-color: #10b981;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #10b981;
+        }
+
+        .info-tags {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .tag {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 8px 14px;
+            border-radius: 10px;
+            font-size: 12px;
+            color: #9ca3af;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-copy {
+            width: 100%;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 14px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+            transition: all 0.2s ease;
+            margin-bottom: 10px;
+        }
+
+        .btn-copy:active {
+            transform: scale(0.98);
+        }
+
+        .btn-home {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: #d1d5db;
+            padding: 12px;
+            border-radius: 14px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .instructions {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 16px;
+        }
+
+        .instructions-title {
+            font-size: 12px;
+            font-weight: 800;
+            color: #f59e0b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            font-size: 13px;
+            color: #9ca3af;
+        }
+
+        .step:last-child {
+            margin-bottom: 0;
+        }
+
+        .step-num {
+            width: 20px;
+            height: 20px;
+            background: rgba(245, 158, 11, 0.15);
+            color: #f59e0b;
+            border-radius: 6px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 11px;
+            font-weight: 800;
+            flex-shrink: 0;
+        }
+
+        .highlight {
+            color: #818cf8;
+            background: rgba(129, 140, 248, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="logo-box">
+            <i class="fa-solid fa-gamepad"></i>
+        </div>
+
+        <div class="app-name">script:KatoHub</div>
+        <h1 class="title">Key Kích Hoạt</h1>
+        <p class="subtitle">Sao chép key bên dưới và dán vào ứng dụng</p>
+
+        <div class="key-box">
+            <div class="key-label">
+                <i class="fa-solid fa-key"></i> MÃ KÍCH HOẠT
+            </div>
+            <div class="key-value" id="keyText">Đang tải key...</div>
+        </div>
+
+        <div class="status-badge">
+            <span class="dot"></span>
+            <span>Key hợp lệ · Sẵn sàng sử dụng</span>
+        </div>
+
+        <div class="info-tags">
+            <div class="tag">
+                <i class="fa-regular fa-clock"></i> HSD: Vĩnh viễn
+            </div>
+            <div class="tag">
+                <i class="fa-solid fa-tag"></i> script:KatoHub
+            </div>
+        </div>
+
+        <button class="btn-copy" onclick="copyKey()">
+            <i class="fa-regular fa-copy"></i> Sao Chép Key
+        </button>
+
+        <button class="btn-home" onclick="window.location.reload()">
+            <i class="fa-solid fa-house"></i> Về Trang Chủ
+        </button>
+
+        <div class="instructions">
+            <div class="instructions-title">
+                <i class="fa-solid fa-circle-info"></i> HƯỚNG DẪN
+            </div>
+            <div class="step">
+                <div class="step-num">1</div>
+                <div>Mở ứng dụng <span class="highlight">script:KatoHub</span></div>
+            </div>
+            <div class="step">
+                <div class="step-num">2</div>
+                <div>Nhấn <span class="highlight">Nhập Key</span></div>
+            </div>
+            <div class="step">
+                <div class="step-num">3</div>
+                <div>Dán key vào để script kích hoạt</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Thuật toán tạo 4 số ngẫu nhiên thay đổi duy nhất theo ngày (24h đổi 1 lần)
+        function generateDailyKey() {
+            const baseKey = "KatoHub-premeumprovip";
+            
+            // Lấy ngày, tháng, năm hiện tại theo múi giờ
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = now.getMonth() + 1;
+            const day = now.getDate();
+            
+            // Tạo mã seed cố định cho cả ngày
+            const dateSeed = year * 10000 + month * 100 + day;
+            
+            // Công thức tạo 4 chữ số thay đổi mỗi ngày
+            const randomCode = Math.floor((Math.sin(dateSeed) * 1000000) % 9000) + 1000;
+            
+            // Trả về Key hoàn chỉnh
+            return `${baseKey}-${Math.abs(randomCode)}`;
+        }
+
+        // Hiển thị Key ra màn hình
+        document.getElementById('keyText').innerText = generateDailyKey();
+
+        function copyKey() {
+            const key = document.getElementById('keyText').innerText;
+            navigator.clipboard.writeText(key).then(() => {
+                const btn = document.querySelector('.btn-copy');
+                btn.innerHTML = '<i class="fa-solid fa-check"></i> Đã Sao Chép!';
+                btn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+                setTimeout(() => {
+                    btn.innerHTML = '<i class="fa-regular fa-copy"></i> Sao Chép Key';
+                    btn.style.background = 'linear-gradient(135deg, #6366f1, #8b5cf6)';
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+    </html>
+                

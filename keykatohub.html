@@ -1,0 +1,72 @@
+-- ====================================================
+-- TÊN FILE LƯU BỘ NHỚ TRÊN THIẾT BỊ NGƯỜI DÙNG
+-- ====================================================
+local saveFileName = "KatoHub_LastKeyDate.txt"
+
+-- 1. Hàm tính Key chuẩn của NGÀY HÔM NAY (Múi giờ UTC)
+local function getTodayKey()
+    local baseKey = "KatoHub-premeumprovip"
+    local date = os.date("!*t")
+    local dateSeed = date.year * 10000 + date.month * 100 + date.day
+    local randomCode = math.floor(math.abs(math.sin(dateSeed) * 1000000) % 9000) + 1000
+    
+    -- Trả về Key hôm nay & Mã ngày dạng YYYYMMDD
+    return baseKey .. "-" .. tostring(randomCode), tostring(dateSeed)
+end
+
+-- 2. Hàm kiểm tra Key nhập vào
+local function checkUserKey(keyNguoiDungNhap)
+    local todayKey, todaySeed = getTodayKey()
+    
+    -- Lấy mã ngày gần nhất đã kích hoạt trong máy người dùng (nếu có)
+    local lastSavedSeed = ""
+    if isfile and isfile(saveFileName) then
+        lastSavedSeed = readfile(saveFileName)
+    end
+
+    -- TRƯỜNG HỢP 1: Nhập đúng Key của ngày hôm nay
+    if keyNguoiDungNhap == todayKey then
+        -- Lưu lại mã ngày hôm nay vào bộ nhớ máy
+        if writefile then
+            writefile(saveFileName, todaySeed)
+        end
+        
+        game:GetService("StarterGui"):SetCore("SendNotification", {
+            Title = "script:KatoHub",
+            Text = "Kích hoạt thành công! Chúc bạn chơi game vui vẻ.",
+            Duration = 5
+        })
+        return true
+
+    -- TRƯỜNG HỢP 2: Nhập lại Key cũ (Key hôm nay khác ngày đã lưu gần nhất)
+    elseif lastSavedSeed ~= "" and lastSavedSeed ~= todaySeed then
+        game:GetService("StarterGui"):SetCore("SendNotification", {
+            Title = "script:KatoHub - Báo Lỗi",
+            Text = "Key đã hết hạn! Vui lòng getkey của ngày hôm nay.",
+            Duration = 6
+        })
+        return false
+
+    -- TRƯỜNG HỢP 3: Nhập sai Key hoàn toàn
+    else
+        game:GetService("StarterGui"):SetCore("SendNotification", {
+            Title = "script:KatoHub - Báo Lỗi",
+            Text = "Key không chính xác! Vui lòng kiểm tra lại.",
+            Duration = 5
+        })
+        return false
+    end
+end
+
+-- ====================================================
+-- VÍ DỤ CÁCH SỬ DỤNG KHI NGƯỜI DÙNG BẤM NÚT XÁC NHẬN KEY
+-- ====================================================
+-- Thay `KeyDinhDan` bằng ô Textbox chứa Key của sếp
+local isSuccess = checkUserKey(KeyDinhDan)
+
+if isSuccess then
+    -- ================================================
+    -- CODE CHÍNH CỦA SẾP ĐẶT Ở ĐÂY
+    -- ================================================
+    print("Script KatoHub bắt đầu chạy...")
+end

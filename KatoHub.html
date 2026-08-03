@@ -89,7 +89,7 @@
             textArea.value = text;
             document.body.appendChild(textArea);
             textArea.select();
-            try { document.execCommand('copy'); onCopySuccess(); } catch (err) { alert('Lỗi sao chép, vui lòng copy thủ công!'); }
+            try { document.execCommand('copy'); onCopySuccess(); } catch (err) { alert('Lỗi sao chép!'); }
             document.body.removeChild(textArea);
         }
         function onCopySuccess() {
@@ -105,6 +105,3 @@
     </script>
 </body>
 </html>
-
-Sếp dán đè mã này vào file trên GitHub nhé!
-          

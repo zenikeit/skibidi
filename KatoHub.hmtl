@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Script Kato Hub</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { background-color: #0b0c10; background-image: radial-gradient(circle at 50% 15%, rgba(255, 120, 0, 0.12) 0%, transparent 60%), linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px); background-size: 100% 100%, 30px 30px, 30px 30px; color: #e0e0e0; min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px 15px; overflow-x: hidden; }
+        .container { width: 100%; max-width: 440px; display: flex; flex-direction: column; align-items: center; }
+        .brand-header { display: flex; align-items: center; gap: 14px; margin-bottom: 24px; }
+        .brand-icon { width: 52px; height: 52px; background: linear-gradient(135deg, rgba(255, 120, 0, 0.2), rgba(200, 80, 0, 0.08)); border: 1px solid rgba(255, 130, 0, 0.4); border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 26px; box-shadow: 0 0 20px rgba(255, 130, 0, 0.25); }
+        .brand-info h1 { font-size: 20px; font-weight: 800; color: #ffffff; margin-bottom: 2px; }
+        .brand-info p { font-size: 11px; color: #7a8294; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; }
+        .card { width: 100%; background: #12141a; border: 1px solid #1f232d; border-radius: 20px; padding: 24px 20px; box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6); display: flex; flex-direction: column; gap: 16px; }
+        .status-badge { align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; background: rgba(255, 140, 0, 0.12); border: 1px solid rgba(255, 140, 0, 0.3); color: #ff9d3b; padding: 5px 12px; border-radius: 15px; font-size: 11px; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; }
+        .card-title { font-size: 22px; font-weight: 800; color: #ffffff; margin-top: -4px; }
+        .alert-success { background: rgba(46, 213, 115, 0.08); border: 1px solid rgba(46, 213, 115, 0.25); border-radius: 12px; padding: 12px 16px; display: flex; align-items: center; gap: 10px; color: #2ed573; font-size: 13px; font-weight: 600; }
+        .alert-icon { width: 20px; height: 20px; background: #2ed573; color: #0d1117; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 900; flex-shrink: 0; }
+        .script-box { background: #161922; border: 1px solid #202532; border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+        .script-header { display: flex; justify-content: space-between; align-items: center; }
+        .script-name { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 800; color: #ff9d3b; text-transform: uppercase; letter-spacing: 0.5px; }
+        .game-tag { background: #1f2430; color: #8b92a3; padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; }
+        .code-display { background: #0b0c10; border: 1px solid #1a1e29; border-radius: 8px; padding: 12px; font-family: "Courier New", Courier, monospace; font-size: 12px; color: #ffb142; word-break: break-all; line-height: 1.5; max-height: 90px; overflow-y: auto; }
+        .btn-action { width: 100%; padding: 14px; border-radius: 12px; font-size: 14px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s ease; border: none; outline: none; }
+        .btn-copy { background: linear-gradient(135deg, rgba(255, 140, 0, 0.15), rgba(200, 80, 0, 0.05)); border: 1px solid rgba(255, 140, 0, 0.4); color: #ff9d3b; box-shadow: 0 4px 15px rgba(255, 140, 0, 0.1); }
+        .btn-copy:hover { background: rgba(255, 140, 0, 0.25); color: #ffffff; transform: translateY(-1px); }
+        .btn-copy:active { transform: scale(0.98); }
+        .btn-reload { background: #161922; border: 1px solid #202532; color: #8b92a3; }
+        .btn-reload:hover { background: #1d212d; color: #ffffff; }
+        .footer { margin-top: 20px; font-size: 12px; color: #4b505e; text-align: center; }
+        .toast { position: fixed; bottom: -60px; left: 50%; transform: translateX(-50%); background: #ff9d3b; color: #000000; padding: 12px 24px; border-radius: 30px; font-weight: 800; font-size: 13px; box-shadow: 0 10px 25px rgba(255, 157, 59, 0.4); transition: bottom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 1000; }
+        .toast.show { bottom: 30px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="brand-header">
+            <div class="brand-icon">🛡️</div>
+            <div class="brand-info">
+                <h1>Script Kato Hub</h1>
+                <p>ronnei7.htk</p>
+            </div>
+        </div>
+        <div class="card">
+            <div class="status-badge">✓ THÀNH CÔNG</div>
+            <div class="card-title">Script của bạn!</div>
+            <div class="alert-success">
+                <div class="alert-icon">✓</div>
+                <span>Script đã được tạo thành công!</span>
+            </div>
+            <div class="script-box">
+                <div class="script-header">
+                    <div class="script-name">📜 SCRIPT KATO HUB</div>
+                    <div class="game-tag">+1 Speed Keyboard Escape</div>
+                </div>
+                <div class="code-display" id="scriptCode">loadstring(game:HttpGet("https://raw.githubusercontent.com/zenikeit/skibidi/refs/heads/main/KatoHub_keyless.lua"))()</div>
+            </div>
+            <button class="btn-action btn-copy" onclick="copyScript()">📋 Sao chép Script</button>
+            <button class="btn-action btn-reload" onclick="reloadPage()">🔄 Lấy script mới</button>
+        </div>
+        <div class="footer">Kato Hub Auth • System 2026</div>
+    </div>
+    <div id="toast" class="toast">đã copy script Kato Hub</div>
+    <script>
+        window.addEventListener('DOMContentLoaded', () => { shootFireworks(); });
+        function shootFireworks() {
+            var duration = 2.5 * 1000;
+            var animationEnd = Date.now() + duration;
+            var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 999 };
+            function randomInRange(min, max) { return Math.random() * (max - min) + min; }
+            var interval = setInterval(function() {
+                var timeLeft = animationEnd - Date.now();
+                if (timeLeft <= 0) { return clearInterval(interval); }
+                var particleCount = 50 * (timeLeft / duration);
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
+            }, 200);
+        }
+        function copyScript() {
+            const codeText = document.getElementById('scriptCode').innerText;
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(codeText).then(() => { onCopySuccess(); }).catch(() => { fallbackCopy(codeText); });
+            } else { fallbackCopy(codeText); }
+        }
+        function fallbackCopy(text) {
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            document.body.appendChild(textArea);
+            textArea.select();
+            try { document.execCommand('copy'); onCopySuccess(); } catch (err) { alert('Lỗi sao chép, vui lòng copy thủ công!'); }
+            document.body.removeChild(textArea);
+        }
+        function onCopySuccess() {
+            showToast();
+            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+        }
+        function showToast() {
+            const toast = document.getElementById('toast');
+            toast.classList.add('show');
+            setTimeout(() => { toast.classList.remove('show'); }, 3000);
+        }
+        function reloadPage() { location.reload(); }
+    </script>
+</body>
+</html>
+
+Sếp dán đè mã này vào file trên GitHub nhé!
+          

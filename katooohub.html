@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đang chuyển hướng đến Key...</title>
+    <style>
+        body {
+            background-color: #0b0c10;
+            color: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            text-align: center;
+        }
+        .loader {
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border-left-color: #a855f7;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        p {
+            color: #9ca3af;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <div class="loader"></div>
+        <h2>Đang tải Key hôm nay cho sếp...</h2>
+        <p>Vui lòng chờ trong giây lát hệ thống đang chuyển hướng!</p>
+    </div>
+
+    <script>
+        // Thuật toán tự động đổi tên trang đích theo ngày/tháng/năm
+        function redirectToTodayKey() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            
+            // Tạo ra tên file ẩn theo ngày (Ví dụ: key-2026-08-04.html)
+            // Hoặc sếp có thể dùng chung file index.html nhưng truyền ngày qua đường link:
+            const targetPage = `index.html?date=${year}${month}${day}`;
+            
+            // Chuyển hướng ngay lập tức sau 0.5 giây
+            setTimeout(() => {
+                window.location.href = targetPage;
+            }, 500);
+        }
+
+        redirectToTodayKey();
+    </script>
+</body>
+</html>

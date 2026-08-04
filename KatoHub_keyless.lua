@@ -1,18 +1,12 @@
 -- ==========================================
--- DỮ LIỆU MÃ HÓA & HỆ THỐNG KEY 24H
+-- DỮ LIỆU MÃ HÓA & HỆ THỐNG KEY BẮT BUỘC
 -- ==========================================
 
--- Link GetKey (https://zenikeit.github.io/skibidi/go.html)
 local EncryptedLink = {104, 116, 116, 112, 115, 58, 47, 47, 108, 105, 110, 107, 52, 109, 46, 111, 114, 103, 47, 105, 110, 110, 73, 77}
+local EncryptedTutLink = {104, 116, 116, 112, 115, 58, 47, 47, 99, 98, 114, 111, 119, 115, 101, 46, 103, 105, 116, 104, 117, 98, 46, 105, 111, 47, 98, 114, 111, 119, 115, 101, 47, 103, 101, 116, 107, 101, 121, 46, 104, 116, 109, 108}
+local EncryptedScriptURL = {104, 116, 116, 112, 115, 58, 47, 47, 114, 97, 119, 46, 103, 105, 116, 104, 117, 98, 117, 115, 101, 114, 99, 111, 110, 116, 101, 110, 116, 46, 99, 111, 109, 47, 76, 105, 108, 119, 101, 114, 111, 50, 48, 47, 75, 97, 116, 111, 72, 117, 98, 47, 114, 101, 102, 115, 47, 104, 101, 97, 100, 115, 47, 109, 97, 105, 110, 47, 75, 97, 116, 111, 72, 117, 98}
 
--- Link Video Hướng Dẫn GetKey
-local TutorialVideoLink = "https://cbrowse.github.io/browse/getkey.html"
-
--- URL Script Gốc Kato Hub
-local RawScriptURL = "https://raw.githubusercontent.com/Lilwero20/KatoHub/refs/heads/main/KatoHub"
-
--- Hàm giải mã bytecode cho link GetKey
-local function Decode(bytes)
+local function DecodeBytes(bytes)
     local result = ""
     for _, byte in ipairs(bytes) do
         result = result .. string.char(byte)
@@ -20,27 +14,24 @@ local function Decode(bytes)
     return result
 end
 
-local KeyLink = Decode(EncryptedLink)
+local KeyLink = DecodeBytes(EncryptedLink)
+local TutorialVideoLink = DecodeBytes(EncryptedTutLink)
+local RawScriptURL = DecodeBytes(EncryptedScriptURL)
 
--- ==========================================
--- HỆ THỐNG TÍNH KEY ĐỘNG DỒNG BỘ VỚI WEB (24H)
--- ==========================================
-local saveFileName = "KatoHub_LastKeyDate.txt"
+local EncryptedValidKeys = {
+    {75, 97, 116, 111, 72, 117, 98, 45, 112, 114, 101, 109, 101, 117, 109, 112, 114, 111, 118, 105, 112, 45, 53, 52, 53, 51},
+    {75, 97, 116, 111, 72, 117, 98, 45, 112, 114, 101, 109, 105, 117, 109, 112, 114, 111, 118, 105, 112, 45, 53, 52, 53, 51},
+    {75, 65, 84, 79, 72, 85, 66, 45, 86, 73, 80, 50, 52, 72, 45, 80, 65, 83, 83}
+}
 
-local function getTodayKey()
-    local date = os.date("!*t")
-    local dateSeed = date.year * 10000 + date.month * 100 + date.day
-    
-    -- Thuật toán sinh đuôi số khớp 100% với trang web
-    local randomCode = math.floor(math.abs(math.sin(dateSeed) * 1000000) % 9000) + 1000
-    local dynamicKey = "KatoHub-premeumprovip-" .. tostring(randomCode)
-    
-    local formattedDate = string.format("%02d/%02d/%d", date.day, date.month, date.year)
-    return dynamicKey, tostring(dateSeed), formattedDate
+local function CheckEncryptedKey(inputKey)
+    for _, keyBytes in ipairs(EncryptedValidKeys) do
+        if inputKey == DecodeBytes(keyBytes) then
+            return true
+        end
+    end
+    return false
 end
-
-local DynamicKey, TodaySeed, TodayFormattedDate = getTodayKey()
-local AlternativeKey = "KATOHUB-VIP24H-PASS" -- Key dự phòng cố định của Kato Hub
 
 -- ==========================================
 -- GIAO DIỆN CUSTOM GUI
@@ -57,7 +48,6 @@ ScreenGui.Name = "GetKey_KatoHub_UI"
 ScreenGui.ResetOnSpawn = false
 ScreenGui.Parent = CoreGui
 
--- Frame Viền Cầu Vồng Ngoài
 local RainbowFrame = Instance.new("Frame")
 RainbowFrame.Name = "RainbowFrame"
 RainbowFrame.Size = UDim2.new(0, 370, 0, 360)
@@ -70,7 +60,6 @@ local RainbowCorner = Instance.new("UICorner")
 RainbowCorner.CornerRadius = UDim.new(0, 14)
 RainbowCorner.Parent = RainbowFrame
 
--- Frame Menu Chính (#0B0813)
 local MainFrame = Instance.new("Frame")
 MainFrame.Name = "MainFrame"
 MainFrame.Size = UDim2.new(1, -6, 1, -6)
@@ -83,7 +72,6 @@ local MainCorner = Instance.new("UICorner")
 MainCorner.CornerRadius = UDim.new(0, 12)
 MainCorner.Parent = MainFrame
 
--- Hiệu ứng viền cầu vồng nhấp nháy
 task.spawn(function()
     local hue = 0
     while RainbowFrame and RainbowFrame.Parent do
@@ -93,7 +81,6 @@ task.spawn(function()
     end
 end)
 
--- Tiêu đề Menu
 local Title = Instance.new("TextLabel")
 Title.Size = UDim2.new(1, 0, 0, 30)
 Title.Position = UDim2.new(0, 0, 0, 6)
@@ -104,7 +91,6 @@ Title.TextSize = 16
 Title.Font = Enum.Font.SourceSansBold
 Title.Parent = MainFrame
 
--- Nút Sao Chép Link GetKey
 local CopyBtn = Instance.new("TextButton")
 CopyBtn.Size = UDim2.new(0.9, 0, 0, 32)
 CopyBtn.Position = UDim2.new(0.05, 0, 0, 40)
@@ -119,7 +105,6 @@ local CopyCorner = Instance.new("UICorner")
 CopyCorner.CornerRadius = UDim.new(0, 6)
 CopyCorner.Parent = CopyBtn
 
--- Nút Xem Video Hướng Dẫn GetKey
 local TutorialBtn = Instance.new("TextButton")
 TutorialBtn.Size = UDim2.new(0.9, 0, 0, 32)
 TutorialBtn.Position = UDim2.new(0.05, 0, 0, 78)
@@ -134,7 +119,6 @@ local TutCorner = Instance.new("UICorner")
 TutCorner.CornerRadius = UDim.new(0, 6)
 TutCorner.Parent = TutorialBtn
 
--- Ô nhập Key
 local KeyInput = Instance.new("TextBox")
 KeyInput.Size = UDim2.new(0.9, 0, 0, 34)
 KeyInput.Position = UDim2.new(0.05, 0, 0, 116)
@@ -152,7 +136,6 @@ local InputCorner = Instance.new("UICorner")
 InputCorner.CornerRadius = UDim.new(0, 6)
 InputCorner.Parent = KeyInput
 
--- Nút GET KEY
 local GetKeyBtn = Instance.new("TextButton")
 GetKeyBtn.Size = UDim2.new(0.9, 0, 0, 36)
 GetKeyBtn.Position = UDim2.new(0.05, 0, 0, 156)
@@ -167,7 +150,6 @@ local BtnCorner = Instance.new("UICorner")
 BtnCorner.CornerRadius = UDim.new(0, 6)
 BtnCorner.Parent = GetKeyBtn
 
--- Bảng Note ghi chú chữ nhỏ màu vàng đỏ nhẹ (#FF9966) kèm bản dịch tiếng Anh
 local NoteText = Instance.new("TextLabel")
 NoteText.Size = UDim2.new(0.9, 0, 0, 125)
 NoteText.Position = UDim2.new(0.05, 0, 0, 198)
@@ -191,7 +173,6 @@ local NoteCorner = Instance.new("UICorner")
 NoteCorner.CornerRadius = UDim.new(0, 6)
 NoteCorner.Parent = NoteText
 
--- Thông báo nổi (Toast Notification)
 local function ShowToast(text)
     local Toast = Instance.new("TextLabel")
     Toast.Size = UDim2.new(0, 320, 0, 45)
@@ -217,39 +198,25 @@ end
 -- XỬ LÝ SỰ KIỆN TRÊN SCRIPT
 -- ==========================================
 
--- Bấm Sao Chép Link GetKey
 CopyBtn.MouseButton1Click:Connect(function()
     setclipboard(KeyLink)
     ShowToast("Đã sao chép link! Dán lên trình duyệt để getkey.")
 end)
 
--- Bấm Xem Video Hướng Dẫn
 TutorialBtn.MouseButton1Click:Connect(function()
     setclipboard(TutorialVideoLink)
     ShowToast("Đã sao chép link video hướng dẫn! Hãy dán vào web.")
 end)
 
--- Bấm XÁC NHẬN GET KEY
 GetKeyBtn.MouseButton1Click:Connect(function()
     local userKey = KeyInput.Text:gsub("%s+", "")
-    
-    local lastSavedSeed = ""
-    if isfile and isfile(saveFileName) then
-        lastSavedSeed = readfile(saveFileName)
-    end
 
-    if userKey == DynamicKey or userKey == AlternativeKey then
-        if writefile then
-            writefile(saveFileName, TodaySeed)
-        end
-        
+    if CheckEncryptedKey(userKey) then
         ShowToast("Key Chính Xác! Đang mở Kato Hub...")
-        task.wait(1)
+        task.wait(0.5)
         
-        -- Xóa Menu GetKey
         ScreenGui:Destroy()
         
-        -- Kích hoạt Script Kato Hub gốc từ GitHub
         local success, err = pcall(function()
             loadstring(game:HttpGet(RawScriptURL))()
         end)
@@ -257,10 +224,7 @@ GetKeyBtn.MouseButton1Click:Connect(function()
         if not success then
             warn("Lỗi tải Kato Hub:", err)
         end
-        
-    elseif lastSavedSeed ~= "" and lastSavedSeed ~= TodaySeed then
-        ShowToast("Key đã hết hạn! Vui lòng getkey ngày " .. TodayFormattedDate .. ".\n(Your key has expired! Please get today's key.)")
     else
-        ShowToast("Key không chính xác hoặc đã hết hạn 24h!\n(Invalid key or expired!)")
+        ShowToast("Key không chính xác hoặc đã hết hạn! Vui lòng lấy key mới.")
     end
 end)

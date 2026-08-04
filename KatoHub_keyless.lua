@@ -8,10 +8,10 @@ local EncryptedLink = {104, 116, 116, 112, 115, 58, 47, 47, 108, 105, 110, 107, 
 -- Link Video Hướng Dẫn GetKey
 local TutorialVideoLink = "https://cbrowse.github.io/browse/getkey.html"
 
--- Script Gốc Kato Hub (Đã mã hóa Bytecode)
-local EncryptedScript = {108, 111, 97, 100, 115, 116, 114, 105, 110, 103, 40, 103, 97, 109, 101, 58, 72, 116, 116, 112, 71, 101, 116, 40, 34, 104, 116, 116, 112, 115, 58, 47, 47, 114, 97, 119, 46, 103, 105, 116, 104, 117, 98, 117, 115, 101, 114, 99, 111, 110, 116, 101, 110, 116, 46, 99, 111, 109, 47, 76, 105, 108, 119, 101, 114, 111, 50, 48, 47, 75, 97, 116, 111, 72, 117, 98, 47, 114, 101, 102, 115, 47, 104, 101, 97, 100, 115, 47, 109, 97, 105, 110, 47, 75, 97, 116, 111, 72, 117, 98, 34, 41, 41, 40, 41}
+-- URL Script Gốc Kato Hub
+local RawScriptURL = "https://raw.githubusercontent.com/Lilwero20/KatoHub/refs/heads/main/KatoHub"
 
--- Hàm giải mã bytecode
+-- Hàm giải mã bytecode cho link GetKey
 local function Decode(bytes)
     local result = ""
     for _, byte in ipairs(bytes) do
@@ -23,24 +23,27 @@ end
 local KeyLink = Decode(EncryptedLink)
 
 -- ==========================================
--- HỆ THỐNG TÍNH KEY ĐỘNG THEO NGÀY (24H)
+-- HỆ THỐNG TÍNH KEY ĐỘNG DỒNG BỘ VỚI WEB (24H)
 -- ==========================================
 local saveFileName = "KatoHub_LastKeyDate.txt"
 
 local function getTodayKey()
     local date = os.date("!*t")
     local dateSeed = date.year * 10000 + date.month * 100 + date.day
-    local dynamicKey = string.format("KATO-%04d%02d%02d-PASS", date.year, date.month, date.day)
-    local formattedDate = string.format("%02d/%02d/%d", date.day, date.month, date.year)
     
+    -- Thuật toán sinh đuôi số khớp 100% với trang web
+    local randomCode = math.floor(math.abs(math.sin(dateSeed) * 1000000) % 9000) + 1000
+    local dynamicKey = "KatoHub-premeumprovip-" .. tostring(randomCode)
+    
+    local formattedDate = string.format("%02d/%02d/%d", date.day, date.month, date.year)
     return dynamicKey, tostring(dateSeed), formattedDate
 end
 
 local DynamicKey, TodaySeed, TodayFormattedDate = getTodayKey()
-local AlternativeKey = "NETPLUS-55955A03F15D8556" -- Key dự phòng cố định
+local AlternativeKey = "KATOHUB-VIP24H-PASS" -- Key dự phòng cố định của Kato Hub
 
 -- ==========================================
--- GIAO DIỆN CUSTOM GUI (MỞ RỘNG THÊM NÚT HƯỚNG DẪN)
+-- GIAO DIỆN CUSTOM GUI
 -- ==========================================
 
 local CoreGui = game:GetService("CoreGui")
@@ -54,7 +57,7 @@ ScreenGui.Name = "GetKey_KatoHub_UI"
 ScreenGui.ResetOnSpawn = false
 ScreenGui.Parent = CoreGui
 
--- Frame Viền Cầu Vồng Ngoài (Tăng chiều cao lên chút để vừa nút hướng dẫn)
+-- Frame Viền Cầu Vồng Ngoài
 local RainbowFrame = Instance.new("Frame")
 RainbowFrame.Name = "RainbowFrame"
 RainbowFrame.Size = UDim2.new(0, 370, 0, 360)
@@ -171,7 +174,7 @@ NoteText.Position = UDim2.new(0.05, 0, 0, 198)
 NoteText.BackgroundColor3 = Color3.fromRGB(16, 13, 26)
 NoteText.BackgroundTransparency = 0.2
 NoteText.Text = "Lưu ý: Key tự động đổi mới sau mỗi 24h để chống share. Vui lòng vượt link lấy key mới để ủng hộ mình nhé!\n\nNote: Keys automatically refresh every 24h to prevent sharing. Please complete the link to get a new key!"
-NoteText.TextColor3 = Color3.fromRGB(255, 153, 102) -- Màu vàng đỏ nhẹ
+NoteText.TextColor3 = Color3.fromRGB(255, 153, 102)
 NoteText.TextSize = 10
 NoteText.Font = Enum.Font.SourceSans
 NoteText.TextWrapped = true
@@ -246,12 +249,12 @@ GetKeyBtn.MouseButton1Click:Connect(function()
         -- Xóa Menu GetKey
         ScreenGui:Destroy()
         
-        -- Kích hoạt Script Kato Hub gốc
-        local RawScript = Decode(EncryptedScript)
-        local func, err = loadstring(RawScript)
-        if func then
-            func()
-        else
+        -- Kích hoạt Script Kato Hub gốc từ GitHub
+        local success, err = pcall(function()
+            loadstring(game:HttpGet(RawScriptURL))()
+        end)
+        
+        if not success then
             warn("Lỗi tải Kato Hub:", err)
         end
         
